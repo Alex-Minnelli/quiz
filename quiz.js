@@ -1,143 +1,77 @@
-var quiz = {
-  // (A) PROPERTIES
-  // (A1) QUESTIONS & ANSWERS
-  // Q = QUESTION, O = OPTIONS, A = CORRECT ANSWER
-  data: [
-  {
-    q : "What is the standard distance between the target and archer in Olympics?",
-    o : [
-      "50 meters",
-      "70 meters",
-      "100 meters",
-      "120 meters"
-    ],
-    a : 1 // arrays start with 0, so answer is 70 meters
-  },
-  {
-    q : "Which is the highest number on a standard roulette wheel?",
-    o : [
-      "22",
-      "24",
-      "32",
-      "36"
-    ],
-    a : 3
-  },
-  {
-    q : "How much wood could a woodchuck chuck if a woodchuck would chuck wood?",
-    o : [
-      "400 pounds",
-      "550 pounds",
-      "700 pounds",
-      "750 pounds"
-    ],
-    a : 2
-  },
-  {
-    q : "Which is the seventh planet from the sun?",
-    o : [
-      "Uranus",
-      "Earth",
-      "Pluto",
-      "Mars"
-    ],
-    a : 0
-  },
-  {
-    q : "Which is the largest ocean on Earth?",
-    o : [
-      "Atlantic Ocean",
-      "Indian Ocean",
-      "Arctic Ocean",
-      "Pacific Ocean"
-    ],
-    a : 3
-  }
-  ],
+const start = document.getElementById("start");
+const quiz = document.getElementById("quiz");
+const question = document.getElementById("question");
+const choiceA = document.getElementById("A");
+const choiceB = document.getElementById("B");
+const choiceC = document.getElementById("C");
+const scoreDiv = document.getElementById("scoreContainer");
 
-  // (A2) HTML ELEMENTS
-  hWrap: null, // HTML quiz container
-  hQn: null, // HTML question wrapper
-  hAns: null, // HTML answers wrapper
-
-  // (A3) GAME FLAGS
-  now: 0, // current question
-  score: 0, // current score
-
-  // (B) INIT QUIZ HTML
-  init: () => {
-    // (B1) WRAPPER
-    quiz.hWrap = document.getElementById("quizWrap");
-
-    // (B2) QUESTIONS SECTION
-    quiz.hQn = document.createElement("div");
-    quiz.hQn.id = "quizQn";
-    quiz.hWrap.appendChild(quiz.hQn);
-
-    // (B3) ANSWERS SECTION
-    quiz.hAns = document.createElement("div");
-    quiz.hAns.id = "quizAns";
-    quiz.hWrap.appendChild(quiz.hAns);
-
-    // (B4) GO!
-    quiz.draw();
-  },
-
-  // (C) DRAW QUESTION
-  draw: () => {
-    // (C1) QUESTION
-    quiz.hQn.innerHTML = quiz.data[quiz.now].q;
-
-    // (C2) OPTIONS
-    quiz.hAns.innerHTML = "";
-    for (let i in quiz.data[quiz.now].o) {
-      let radio = document.createElement("input");
-      radio.type = "radio";
-      radio.name = "quiz";
-      radio.id = "quizo" + i;
-      quiz.hAns.appendChild(radio);
-      let label = document.createElement("label");
-      label.innerHTML = quiz.data[quiz.now].o[i];
-      label.setAttribute("for", "quizo" + i);
-      label.dataset.idx = i;
-      label.addEventListener("click", () => { quiz.select(label); });
-      quiz.hAns.appendChild(label);
+let questions = [
+    {
+        question : "What does HTML stand for?",
+        choiceA : "Correct",
+        choiceB : "Wrong",
+        choiceC : "Wrong",
+        correct : "A"
+    },{
+        question : "What does CSS stand for?",
+        choiceA : "Wrong",
+        choiceB : "Correct",
+        choiceC : "Wrong",
+        correct : "B"
+    },{
+        question : "What does JS stand for?",
+        choiceA : "Wrong",
+        choiceB : "Wrong",
+        choiceC : "Correct",
+        correct : "C"
     }
-  },
+];
 
-  // (D) OPTION SELECTED
-  select: (option) => {
-    // (D1) DETACH ALL ONCLICK
-    let all = quiz.hAns.getElementsByTagName("label");
-    for (let label of all) {
-      label.removeEventListener("click", quiz.select);
+const lastQuestion = questions.length - 1;
+let runningQuestion = 0;
+let count = 0;
+const questionTime = 10; // 10s
+let score = 0;
+
+function renderQuestion(){
+    let q = questions[runningQuestion];
+
+    question.innerHTML = "<p>"+ q.question +"</p>";
+    choiceA.innerHTML = q.choiceA;
+    choiceB.innerHTML = q.choiceB;
+    choiceC.innerHTML = q.choiceC;
+}
+
+start.addEventListener("click",startQuiz);
+
+// start quiz
+function startQuiz(){
+    start.style.display = "none";
+    renderQuestion();
+    quiz.style.display = "block";
+}
+
+function checkAnswer(answer){
+    if(answer == questions[runningQuestion].correct){
+        score++;
     }
-
-    // (D2) CHECK IF CORRECT
-    let correct = option.dataset.idx == quiz.data[quiz.now].a;
-    if (correct) {
-      quiz.score++;
-      option.classList.add("correct");
-    } else {
-      option.classList.add("wrong");
+    count = 0;
+    if(runningQuestion = lastQuestion){
+      break;
     }
+    else if(runningQuestion < lastQuestion){
+        runningQuestion++;
+        renderQuestion();
+    }else{
+        scoreRender();
+    }
+}
 
-    // (D3) NEXT QUESTION OR END GAME
-    quiz.now++;
-    setTimeout(() => {
-      if (quiz.now < quiz.data.length) { quiz.draw(); }
-      else {
-        quiz.hQn.innerHTML = `You have answered ${quiz.score} of ${quiz.data.length} correctly.`;
-        quiz.hAns.innerHTML = "";
-      }
-    }, 1000);
-  },
+function scoreRender(){
+    scoreDiv.style.display = "block";
 
-  // (E) RESTART QUIZ
-  reset : () => {
-    quiz.now = 0;
-    quiz.score = 0;
-    quiz.draw();
-  }
-};
-window.addEventListener("load", quiz.init);
+    const scorePerCent = Math.round(100 * score/questions.length);
+
+    scoreDiv.innerHTML += "<p>"+ scorePerCent +"%</p>";
+}
