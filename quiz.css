@@ -1,13 +1,8 @@
-/* (A) WRAPPER */
 #quizWrap {
   max-width: 600px;
   margin: 0 auto;
-  /* RECOMMENDED FIXED HEIGHT IF YOU HAVE CONTENT BELOW THE QUIZ */
-  /* SO THAT PAGE LAYOUT DOES NOT "JUMP" */
-  /* height: 250px; */
 }
 
-/* (B) QUESTION */
 #quizQn {
   padding: 20px;
   background: #4c93ba;
@@ -16,7 +11,6 @@
   border-radius: 10px;
 }
 
-/* (C) ANSWERS */
 #quizAns {
   margin: 10px 0;
   display: grid;
@@ -42,7 +36,6 @@
   border: 1px solid #c78181;
 }
 
-/* (D) BODY... DOES NOT QUITE MATTER */
 html, body {
   background: #74b6db;
   font-family: arial, sans-serif;
